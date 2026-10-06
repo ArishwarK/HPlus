@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Smart Hospital Queue Management System</display-name>
+    <description>Enterprise Real-Time Hospital Queue and Waiting Time Management System</description>
+
+    <!-- Session Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ==================================================================== -->
+    <!-- FILTERS                                                              -->
+    <!-- ==================================================================== -->
+
+    <!-- Character Encoding Filter -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>com.hospital.filter.CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Authentication Filter -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.hospital.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/doctor/*</url-pattern>
+        <url-pattern>/receptionist/*</url-pattern>
+        <url-pattern>/patient/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Role Authorization Filter -->
+    <filter>
+        <filter-name>RoleAuthorizationFilter</filter-name>
+        <filter-class>com.hospital.filter.RoleAuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>RoleAuthorizationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/doctor/*</url-pattern>
+        <url-pattern>/receptionist/*</url-pattern>
+        <url-pattern>/patient/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ==================================================================== -->
+    <!-- SERVLETS & SERVLET MAPPINGS                                          -->
+    <!-- ==================================================================== -->
+
+    <!-- Auth Servlets -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.hospital.controller.auth.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.hospital.controller.auth.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.hospital.controller.auth.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <!-- Patient Servlets -->
+    <servlet>
+        <servlet-name>PatientDashboardServlet</servlet-name>
+        <servlet-class>com.hospital.controller.patient.PatientDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientDashboardServlet</servlet-name>
+        <url-pattern>/patient/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookAppointmentServlet</servlet-name>
+        <servlet-class>com.hospital.controller.patient.BookAppointmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookAppointmentServlet</servlet-name>
+        <url-pattern>/patient/book-appointment</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PatientQueueServlet</servlet-name>
+        <servlet-class>com.hospital.controller.patient.PatientQueueServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientQueueServlet</servlet-name>
+        <url-pattern>/patient/queue</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PatientHistoryServlet</servlet-name>
+        <servlet-class>com.hospital.controller.patient.PatientHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PatientHistoryServlet</servlet-name>
+        <url-pattern>/patient/history</url-pattern>
+    </servlet-mapping>
+
+    <!-- Doctor Servlets -->
+    <servlet>
+        <servlet-name>DoctorDashboardServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.DoctorDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorDashboardServlet</servlet-name>
+        <url-pattern>/doctor/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CallNextServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.CallNextServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CallNextServlet</servlet-name>
+        <url-pattern>/doctor/call-next</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StartConsultationServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.StartConsultationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StartConsultationServlet</servlet-name>
+        <url-pattern>/doctor/start-consultation</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CompleteConsultationServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.CompleteConsultationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CompleteConsultationServlet</servlet-name>
+        <url-pattern>/doctor/complete-consultation</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SkipPatientServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.SkipPatientServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SkipPatientServlet</servlet-name>
+        <url-pattern>/doctor/skip-patient</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RecallPatientServlet</servlet-name>
+        <servlet-class>com.hospital.controller.doctor.RecallPatientServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecallPatientServlet</servlet-name>
+        <url-pattern>/doctor/recall-patient</url-pattern>
+    </servlet-mapping>
+
+    <!-- Receptionist Servlets -->
+    <servlet>
+        <servlet-name>ReceptionistDashboardServlet</servlet-name>
+        <servlet-class>com.hospital.controller.receptionist.ReceptionistDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReceptionistDashboardServlet</servlet-name>
+        <url-pattern>/receptionist/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterWalkInServlet</servlet-name>
+        <servlet-class>com.hospital.controller.receptionist.RegisterWalkInServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterWalkInServlet</servlet-name>
+        <url-pattern>/receptionist/walkin</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GenerateTokenServlet</servlet-name>
+        <servlet-class>com.hospital.controller.receptionist.GenerateTokenServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateTokenServlet</servlet-name>
+        <url-pattern>/receptionist/generate-token</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MarkArrivalServlet</servlet-name>
+        <servlet-class>com.hospital.controller.receptionist.MarkArrivalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MarkArrivalServlet</servlet-name>
+        <url-pattern>/receptionist/mark-arrival</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Servlets -->
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>com.hospital.controller.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManageDoctorsServlet</servlet-name>
+        <servlet-class>com.hospital.controller.admin.ManageDoctorsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageDoctorsServlet</servlet-name>
+        <url-pattern>/admin/doctors</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManageDepartmentsServlet</servlet-name>
+        <servlet-class>com.hospital.controller.admin.ManageDepartmentsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageDepartmentsServlet</servlet-name>
+        <url-pattern>/admin/departments</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AnalyticsServlet</servlet-name>
+        <servlet-class>com.hospital.controller.admin.AnalyticsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AnalyticsServlet</servlet-name>
+        <url-pattern>/admin/analytics</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManageSettingsServlet</servlet-name>
+        <servlet-class>com.hospital.controller.admin.ManageSettingsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageSettingsServlet</servlet-name>
+        <url-pattern>/admin/settings</url-pattern>
+    </servlet-mapping>
+
+    <!-- AJAX Servlets -->
+    <servlet>
+        <servlet-name>QueueStatusServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.QueueStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>QueueStatusServlet</servlet-name>
+        <url-pattern>/ajax/queue-status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorQueueAjaxServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.DoctorQueueAjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorQueueAjaxServlet</servlet-name>
+        <url-pattern>/ajax/doctor-queue</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>NextPatientAjaxServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.NextPatientAjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NextPatientAjaxServlet</servlet-name>
+        <url-pattern>/ajax/next-patient</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DoctorAvailabilityAjaxServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.DoctorAvailabilityAjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DoctorAvailabilityAjaxServlet</servlet-name>
+        <url-pattern>/ajax/doctor-availability</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SearchPatientAjaxServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.SearchPatientAjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SearchPatientAjaxServlet</servlet-name>
+        <url-pattern>/ajax/search-patient</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LiveStatsAjaxServlet</servlet-name>
+        <servlet-class>com.hospital.controller.ajax.LiveStatsAjaxServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LiveStatsAjaxServlet</servlet-name>
+        <url-pattern>/ajax/live-stats</url-pattern>
+    </servlet-mapping>
+
+    <!-- Error Pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/error/403.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+
+</web-app>
