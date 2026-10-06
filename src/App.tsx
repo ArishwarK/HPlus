@@ -189,58 +189,94 @@ export default function App() {
   const [adminLoginPass, setAdminLoginPass] = useState('••••••••');
   const [adminLoginScope, setAdminLoginScope] = useState('FULL');
 
-  // Real-time Queue State
-  const [doctors, setDoctors] = useState<Doctor[]>([
-    { id: 1, name: 'Dr. Rajesh Kumar', dept: 'Cardiology', deptCode: 'CARD', room: 'OPD-204', avgMinutes: 8, status: 'BUSY' },
-    { id: 2, name: 'Dr. Elena Rostova', dept: 'Orthopedics', deptCode: 'ORTH', room: 'OPD-112', avgMinutes: 12, status: 'AVAILABLE' },
-    { id: 3, name: 'Dr. Marcus Vance', dept: 'Pediatrics', deptCode: 'PED', room: 'OPD-305', avgMinutes: 8, status: 'AVAILABLE' },
-    { id: 4, name: 'Dr. Aisha Patel', dept: 'General Medicine', deptCode: 'GEN', room: 'OPD-101', avgMinutes: 8, status: 'AVAILABLE' },
-  ]);
+  // Real-time Queue State (Persisted in localStorage)
+  const [doctors, setDoctors] = useState<Doctor[]>(() => {
+    try {
+      const saved = localStorage.getItem('hplus_doctors');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      { id: 1, name: 'Dr. Rajesh Kumar', dept: 'Cardiology', deptCode: 'CARD', room: 'OPD-204', avgMinutes: 8, status: 'BUSY' },
+      { id: 2, name: 'Dr. Elena Rostova', dept: 'Orthopedics', deptCode: 'ORTH', room: 'OPD-112', avgMinutes: 12, status: 'AVAILABLE' },
+      { id: 3, name: 'Dr. Marcus Vance', dept: 'Pediatrics', deptCode: 'PED', room: 'OPD-305', avgMinutes: 8, status: 'AVAILABLE' },
+      { id: 4, name: 'Dr. Aisha Patel', dept: 'General Medicine', deptCode: 'GEN', room: 'OPD-101', avgMinutes: 8, status: 'AVAILABLE' },
+    ];
+  });
 
-  const [queue, setQueue] = useState<QueueItem[]>([
-    { queueId: 1, tokenNumber: 41, tokenDisplay: '41', patientName: 'Johnathan Doe', patientUhid: 'UHID-2026-0041', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 100, status: 'COMPLETED', arrivalTime: '08:45 AM', waitMinutes: 0, symptoms: 'Chest tightness upon brisk walking' },
-    { queueId: 2, tokenNumber: 42, tokenDisplay: '42', patientName: 'Maria Santos', patientUhid: 'UHID-2026-0042', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'HIGH', score: 180, status: 'CALLED', arrivalTime: '09:05 AM', waitMinutes: 0, symptoms: 'Sharp chest ache upon deep breathing' },
-    { queueId: 3, tokenNumber: 43, tokenDisplay: '43', patientName: 'David Kim', patientUhid: 'UHID-2026-0043', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 115, status: 'WAITING', arrivalTime: '09:12 AM', waitMinutes: 8, symptoms: 'Routine 6-month lipid and cardio review' },
-    { queueId: 4, tokenNumber: 44, tokenDisplay: '44', patientName: 'Eleanor Vance', patientUhid: 'UHID-2026-0044', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 110, status: 'WAITING', arrivalTime: '09:20 AM', waitMinutes: 16, symptoms: 'Shortness of breath climbing stairs' },
-    { queueId: 5, tokenNumber: 45, tokenDisplay: '45', patientName: 'Robert Chang', patientUhid: 'UHID-2026-0045', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 105, status: 'WAITING', arrivalTime: '09:28 AM', waitMinutes: 24, symptoms: 'Blood pressure checkup and medication refill' },
-  ]);
+  const [queue, setQueue] = useState<QueueItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('hplus_queue');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      { queueId: 1, tokenNumber: 41, tokenDisplay: '41', patientName: 'Johnathan Doe', patientUhid: 'UHID-2026-0041', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 100, status: 'COMPLETED', arrivalTime: '08:45 AM', waitMinutes: 0, symptoms: 'Chest tightness upon brisk walking' },
+      { queueId: 2, tokenNumber: 42, tokenDisplay: '42', patientName: 'Maria Santos', patientUhid: 'UHID-2026-0042', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'HIGH', score: 180, status: 'CALLED', arrivalTime: '09:05 AM', waitMinutes: 0, symptoms: 'Sharp chest ache upon deep breathing' },
+      { queueId: 3, tokenNumber: 43, tokenDisplay: '43', patientName: 'David Kim', patientUhid: 'UHID-2026-0043', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 115, status: 'WAITING', arrivalTime: '09:12 AM', waitMinutes: 8, symptoms: 'Routine 6-month lipid and cardio review' },
+      { queueId: 4, tokenNumber: 44, tokenDisplay: '44', patientName: 'Eleanor Vance', patientUhid: 'UHID-2026-0044', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 110, status: 'WAITING', arrivalTime: '09:20 AM', waitMinutes: 16, symptoms: 'Shortness of breath climbing stairs' },
+      { queueId: 5, tokenNumber: 45, tokenDisplay: '45', patientName: 'Robert Chang', patientUhid: 'UHID-2026-0045', departmentCode: 'CARD', doctorName: 'Dr. Rajesh Kumar', priority: 'NORMAL', score: 105, status: 'WAITING', arrivalTime: '09:28 AM', waitMinutes: 24, symptoms: 'Blood pressure checkup and medication refill' },
+    ];
+  });
 
-  // Announcements State
-  const [announcements, setAnnouncements] = useState<HospitalAnnouncement[]>([
-    {
-      id: 1,
-      title: 'Emergency Triage Protocol In Effect',
-      category: 'URGENT',
-      message: 'Trauma & acute cardiac emergency cases are given immediate consultation priority as per NABH clinical guidelines.',
-      time: '10 mins ago',
-      author: 'Medical Superintendent',
-      isPinned: true
-    },
-    {
-      id: 2,
-      title: 'Wheelchair Escort & Senior Citizen Priority',
-      category: 'GENERAL',
-      message: 'Free wheelchair escorts and fast-track token assistance are available at Central Reception Counter 2.',
-      time: '35 mins ago',
-      author: 'Front Desk Supervisor'
-    },
-    {
-      id: 3,
-      title: 'Cardiology OPD Schedule',
-      category: 'OPD',
-      message: 'Dr. Rajesh Kumar OPD-204 is actively serving tokens 41 through 55. Average wait time is currently 8 minutes.',
-      time: '1 hour ago',
-      author: 'Cardiology OPD Nursing'
-    },
-    {
-      id: 4,
-      title: 'Central Pharmacy Dispensing Counter 4',
-      category: 'CLINICAL',
-      message: 'Following doctor consultation, collect digital prescriptions directly at Ground Floor Pharmacy Counter 4.',
-      time: '2 hours ago',
-      author: 'Chief Pharmacist'
-    }
-  ]);
+  // Announcements State (Persisted in localStorage)
+  const [announcements, setAnnouncements] = useState<HospitalAnnouncement[]>(() => {
+    try {
+      const saved = localStorage.getItem('hplus_announcements');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      {
+        id: 1,
+        title: 'Emergency Triage Protocol In Effect',
+        category: 'URGENT',
+        message: 'Trauma & acute cardiac emergency cases are given immediate consultation priority as per NABH clinical guidelines.',
+        time: '10 mins ago',
+        author: 'Medical Superintendent',
+        isPinned: true
+      },
+      {
+        id: 2,
+        title: 'Wheelchair Escort & Senior Citizen Priority',
+        category: 'GENERAL',
+        message: 'Free wheelchair escorts and fast-track token assistance are available at Central Reception Counter 2.',
+        time: '35 mins ago',
+        author: 'Front Desk Supervisor'
+      },
+      {
+        id: 3,
+        title: 'Cardiology OPD Schedule',
+        category: 'OPD',
+        message: 'Dr. Rajesh Kumar OPD-204 is actively serving tokens 41 through 55. Average wait time is currently 8 minutes.',
+        time: '1 hour ago',
+        author: 'Cardiology OPD Nursing'
+      },
+      {
+        id: 4,
+        title: 'Central Pharmacy Dispensing Counter 4',
+        category: 'CLINICAL',
+        message: 'Following doctor consultation, collect digital prescriptions directly at Ground Floor Pharmacy Counter 4.',
+        time: '2 hours ago',
+        author: 'Chief Pharmacist'
+      }
+    ];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hplus_doctors', JSON.stringify(doctors));
+    } catch {}
+  }, [doctors]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hplus_queue', JSON.stringify(queue));
+    } catch {}
+  }, [queue]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hplus_announcements', JSON.stringify(announcements));
+    } catch {}
+  }, [announcements]);
 
   // Audio Chime & Speech Synthesis Settings
   const [audioEnabled, setAudioEnabled] = useState<boolean>(true);
@@ -397,6 +433,11 @@ export default function App() {
     // Announce via Voice & Chime!
     announceTokenVoice(nextPatient.tokenDisplay, nextPatient.patientName, doctorAuth.doctorName, doctorAuth.room);
     showToast(`Calling Token #${nextPatient.tokenDisplay} (${nextPatient.patientName}) to Room ${doctorAuth.room}`);
+    fetch('/api/queue/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenNumber: nextPatient.tokenNumber, status: 'CALLED' }),
+    }).catch(() => {});
   };
 
   const handleStartConsultation = (tokenNum: number) => {
@@ -404,6 +445,11 @@ export default function App() {
       prev.map(item => (item.tokenNumber === tokenNum ? { ...item, status: 'IN_CONSULTATION' } : item))
     );
     showToast(`Started consultation for Token #${tokenNum}`);
+    fetch('/api/queue/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenNumber: tokenNum, status: 'IN_CONSULTATION' }),
+    }).catch(() => {});
   };
 
   const handleOpenCompleteModal = (item: QueueItem) => {
@@ -422,6 +468,16 @@ export default function App() {
           : item
       )
     );
+    fetch('/api/consultation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        queueId: activeConsultToken.queueId,
+        tokenNumber: activeConsultToken.tokenNumber,
+        diagnosis: diagnosisText,
+        prescription: prescriptionText,
+      }),
+    }).catch(() => {});
     setShowConsultModal(false);
     setActiveConsultToken(null);
     showToast(`Consultation completed for ${activeConsultToken.tokenDisplay}. Prescription archived.`);
@@ -432,6 +488,11 @@ export default function App() {
       prev.map(item => (item.tokenNumber === tokenNum ? { ...item, status: 'SKIPPED' } : item))
     );
     showToast(`Token #${tokenNum} skipped. Marked as absent upon calling.`);
+    fetch('/api/queue/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenNumber: tokenNum, status: 'SKIPPED' }),
+    }).catch(() => {});
   };
 
   const handleRecallPatient = (tokenNum: number) => {
@@ -439,6 +500,11 @@ export default function App() {
       prev.map(item => (item.tokenNumber === tokenNum ? { ...item, status: 'WAITING', score: item.score + 10 } : item))
     );
     showToast(`Token #${tokenNum} recalled back to active waiting queue.`);
+    fetch('/api/queue/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenNumber: tokenNum, status: 'WAITING' }),
+    }).catch(() => {});
   };
 
   // Receptionist Register Walk-in
@@ -470,6 +536,20 @@ export default function App() {
     };
 
     setQueue(prev => [...prev, newItem]);
+    fetch('/api/walkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tokenNumber: newItem.tokenNumber,
+        tokenDisplay: newItem.tokenDisplay,
+        patientName: newItem.patientName,
+        patientUhid: newItem.patientUhid,
+        phone: walkinPhone,
+        priority: walkinPriority,
+        score: initialScore,
+        doctorId: targetDoc.id,
+      }),
+    }).catch(() => {});
     setWalkinName('');
     setWalkinPhone('');
     showToast(`Success: Token #${newItem.tokenDisplay} issued for ${newItem.patientName}!`);

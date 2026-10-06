@@ -39,12 +39,22 @@ public final class DBConnection {
                 driver = PROPERTIES.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
                 url = PROPERTIES.getProperty("db.url", "jdbc:mysql://localhost:3306/hospital_queue_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8");
                 username = PROPERTIES.getProperty("db.username", "root");
-                password = PROPERTIES.getProperty("db.password", "root");
+                password = PROPERTIES.getProperty("db.password", "arish2007");
             } else {
                 driver = "com.mysql.cj.jdbc.Driver";
                 url = "jdbc:mysql://localhost:3306/hospital_queue_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8";
                 username = "root";
-                password = "root";
+                password = "arish2007";
+            }
+            // Allow cloud environment variables (Render / Railway / Docker) to override db.properties
+            if (System.getenv("DB_URL") != null && !System.getenv("DB_URL").isEmpty()) {
+                url = System.getenv("DB_URL");
+            }
+            if (System.getenv("DB_USERNAME") != null && !System.getenv("DB_USERNAME").isEmpty()) {
+                username = System.getenv("DB_USERNAME");
+            }
+            if (System.getenv("DB_PASSWORD") != null) {
+                password = System.getenv("DB_PASSWORD");
             }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Could not read db.properties, using defaults", e);
